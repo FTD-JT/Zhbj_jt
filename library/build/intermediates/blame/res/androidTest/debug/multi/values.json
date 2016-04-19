@@ -1,0 +1,74 @@
+[
+    {
+        "outputFile": "/Users/jingtao/Desktop/Android/Zhbj_jt-master-master/library/build/intermediates/res/merged/androidTest/debug/values/values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 961,
+                    "endColumn": 42,
+                    "endOffset": 999
+                },
+                "from": {
+                    "file": "/Users/jingtao/Desktop/Android/Zhbj_jt-master-master/library/build/intermediates/bundles/debug/res/values/values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 961,
+                        "endColumn": 42,
+                        "endOffset": 999
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "outputFile": "/Users/jingtao/Desktop/Android/Zhbj_jt/library/build/intermediates/res/merged/androidTest/debug/values/values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 961,
+                    "endColumn": 42,
+                    "endOffset": 999
+                },
+                "from": {
+                    "file": "/Users/jingtao/Desktop/Android/Zhbj_jt/library/build/intermediates/bundles/debug/res/values/values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 961,
+                        "endColumn": 42,
+                        "endOffset": 999
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "outputFile": "/Users/jingtao/Desktop/Android/Zhbj_jt-master/library/build/intermediates/res/merged/androidTest/debug/values/values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 961,
+                    "endColumn": 42,
+                    "endOffset": 999
+                },
+                "from": {
+                    "file": "/Users/jingtao/Desktop/Android/Zhbj_jt-master/library/build/intermediates/bundles/debug/res/values/values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 961,
+                        "endColumn": 42,
+                        "endOffset": 999
+                    }
+                }
+            }
+        ]
+    }
+]
