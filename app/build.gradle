@@ -32,4 +32,5 @@ dependencies {
     compile files('lib/xUtils-2.6.13.jar')
     compile files('lib/volley.jar')
     compile 'com.netflix.feign:feign-gson:8.16.0'
+    compile 'fr.baloomba:viewpagerindicator:2.4.2'
 }

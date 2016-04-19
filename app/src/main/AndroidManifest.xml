@@ -24,7 +24,7 @@
         <activity android:name=".GuideActivity" />
         <activity android:name=".MainActivity"
             android:label="智慧北京"
-            android:theme="@android:style/Theme.Holo"
+            android:theme="@style/Theme.PageIndicatorDefaults"
             ></activity>
     </application>
 
