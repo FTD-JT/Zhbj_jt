@@ -4,12 +4,44 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+
+     <RelativeLayout
+         android:layout_width="match_parent"
+         android:layout_height="200dp"
+         android:padding="5dp">
+
     <com.jingtao.zhbj_jt.view.TopNewsViewPager
         android:id="@+id/vp_news"
         android:layout_width="match_parent"
-        android:layout_height="140dp">
+        android:layout_height="match_parent">
 
     </com.jingtao.zhbj_jt.view.TopNewsViewPager>
+
+         <RelativeLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_alignParentBottom="true"
+             android:background="#000">
+
+             <TextView
+                 android:id="@+id/tv_title"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textColor="#fff"
+                 android:textSize="16sp"
+                 />
+
+             <com.viewpagerindicator.CirclePageIndicator
+                 android:id="@+id/indicator"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:padding="10dip"
+                 android:layout_alignParentRight="true"/>
+
+         </RelativeLayout>
+
+     </RelativeLayout>
+
 
     <ListView
         android:id="@+id/lv_list"

@@ -77,7 +77,7 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager implements ViewPage
         //indicator设置滑动监听
         MainActivity mainUi= (MainActivity) mActivity;
         SlidingMenu slidingMenu=mainUi.getSlidingMenu();
-           if(position==0){
+           if(position==0){//只有在北京这个页面,侧边栏才可以出来
               slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
            }else{
                slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);

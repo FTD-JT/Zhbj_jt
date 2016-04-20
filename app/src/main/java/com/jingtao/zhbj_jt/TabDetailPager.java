@@ -8,7 +8,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -21,14 +23,27 @@ import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.viewpagerindicator.CirclePageIndicator;
+
+import java.util.ArrayList;
 
 /**
  * Created by jingtao on 16/4/19.
  */
-public class TabDetailPager extends BaseMenuDetailPager {
+public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnPageChangeListener{
+    private TextView tv_title;//头条标题
+
+    private ArrayList<TabData.TopNewsData> mTopNewsList;//头条新闻集合
+
+    private CirclePageIndicator mIndicator;//头条新闻位置指示器
+
+    private ListView lv_list;
+
     private TextView textView;
 
     private NewsData.NewsTabData mNewsTabData;
+
+    private ArrayList<TabData.TabNewsData> mNewsList;
 
     private String mUrl;
 
@@ -37,6 +52,8 @@ public class TabDetailPager extends BaseMenuDetailPager {
     private ViewPager mViewPager;
 
     private BitmapUtils bitmapUtils;
+
+    private NewsAdapter mNewsAdapter;
 
     public TabDetailPager(Activity mActivity, NewsData.NewsTabData newsTabData) {
         super(mActivity);
@@ -68,16 +85,42 @@ public class TabDetailPager extends BaseMenuDetailPager {
     private void parseData(String result) {
         Gson gson=new Gson();
         mTabDetailData= gson.fromJson(result, TabData.class);
-        Log.i("info","页签详情页返回结果:"+mTabDetailData);
+//        Log.i("info","页签详情页返回结果:"+mTabDetailData);
 
-        mViewPager.setAdapter(new TopNewsAdapter());
+          mTopNewsList= mTabDetailData.data.topnews;
 
+         mNewsList=mTabDetailData.data.news;//新闻数据集合
+
+        if (mTopNewsList!=null){
+            mViewPager.setAdapter(new TopNewsAdapter());
+
+            mIndicator.setViewPager(mViewPager);
+            mIndicator.setSnap(true);//快照显示
+
+            mIndicator.setOnPageChangeListener(this);
+
+            mIndicator.onPageSelected(0);//让指示剂定位到第一个点
+
+            tv_title.setText(mTopNewsList.get(0).title);//第一次进入时设置头条信息
+        }
+
+
+        //填充新闻列表数据
+        if (mNewsList!=null){
+            mNewsAdapter=new NewsAdapter();
+            lv_list.setAdapter(mNewsAdapter);
+        }
     }
 
     @Override
     public View initView() {
         View view = View.inflate(mActivity, R.layout.tab_detail_pager, null);
         mViewPager = (ViewPager) view.findViewById(R.id.vp_news);
+        tv_title = (TextView) view.findViewById(R.id.tv_title);
+        lv_list = (ListView) view.findViewById(R.id.lv_list);
+        mIndicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
+
+
         return view;
     }
 
@@ -88,7 +131,53 @@ public class TabDetailPager extends BaseMenuDetailPager {
 
     }
 
-      class TopNewsAdapter extends PagerAdapter{
+
+    /**
+     * 新闻列表适配器
+     */
+
+    class NewsAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return mNewsList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mNewsList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView==null){
+
+            }
+            return null;
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        tv_title.setText(mTopNewsList.get(position).title);//设置头条新闻
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    class TopNewsAdapter extends PagerAdapter{
 
           public TopNewsAdapter() {
               bitmapUtils = new BitmapUtils(mActivity);
@@ -111,7 +200,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
               imageView.setImageResource(R.drawable.topnews_item_default);
               imageView.setScaleType(ImageView.ScaleType.FIT_XY);//基于控件大小填充图片
 
-             TabData.TopNewsData topNewsData= mTabDetailData.data.topnews.get(position);
+             TabData.TopNewsData topNewsData= mTopNewsList.get(position);
               bitmapUtils.display(imageView,topNewsData.topimage);//传递imageView图片
               container.addView(imageView);
               return imageView;
