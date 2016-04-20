@@ -37,7 +37,7 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
 
     private CirclePageIndicator mIndicator;//头条新闻位置指示器
 
-    private ListView lv_list;
+    private RefreshListView lv_list;
 
     private TextView textView;
 
@@ -115,10 +115,19 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
     @Override
     public View initView() {
         View view = View.inflate(mActivity, R.layout.tab_detail_pager, null);
-        mViewPager = (ViewPager) view.findViewById(R.id.vp_news);
-        tv_title = (TextView) view.findViewById(R.id.tv_title);
-        lv_list = (ListView) view.findViewById(R.id.lv_list);
-        mIndicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
+
+        lv_list = (RefreshListView) view.findViewById(R.id.lv_list);
+        //加载头布局
+        View headerView = View.inflate(mActivity, R.layout.list_header_topnews, null);
+
+       //将头条新闻以头布局形式加载给listview
+        lv_list.addHeaderView(headerView);
+
+        tv_title = (TextView) headerView.findViewById(R.id.tv_title);
+
+        mViewPager = (ViewPager) headerView.findViewById(R.id.vp_news);
+
+        mIndicator = (CirclePageIndicator) headerView.findViewById(R.id.indicator);
 
 
         return view;
@@ -138,6 +147,13 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
 
     class NewsAdapter extends BaseAdapter{
 
+        private BitmapUtils util;
+
+        public NewsAdapter() {
+            util = new BitmapUtils(mActivity);
+            bitmapUtils.configDefaultLoadingImage(R.drawable.topnews_item_default);
+        }
+
         @Override
         public int getCount() {
             return mNewsList.size();
@@ -155,11 +171,32 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder  viewHolder;
             if (convertView==null){
-
+                convertView=View.inflate(mActivity,R.layout.list_news_item,null);
+                viewHolder=new ViewHolder();
+                viewHolder.ivPic = (ImageView) convertView.findViewById(R.id.iv_pic);
+                viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_title);
+                viewHolder.tvDate = (TextView) convertView.findViewById(R.id.tv_date);
+                convertView.setTag(viewHolder);
             }
-            return null;
+            else {
+                viewHolder= (ViewHolder) convertView.getTag();
+            }
+
+            TabData.TabNewsData item= (TabData.TabNewsData) getItem(position);
+
+            viewHolder.tvTitle.setText(item.title);
+            viewHolder.tvDate.setText(item.pubdate);
+            util.display(viewHolder.ivPic,item.listimage);
+            return convertView;
         }
+    }
+
+    static class ViewHolder{
+        public TextView tvTitle;
+        public TextView tvDate;
+        public ImageView ivPic;
     }
 
     @Override
