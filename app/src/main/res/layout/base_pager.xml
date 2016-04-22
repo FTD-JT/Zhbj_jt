@@ -30,6 +30,19 @@
             android:layout_marginLeft="10dp"
             />
 
+        <ImageButton
+            android:id="@+id/ib_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_pic_grid_type"
+            android:background="@null"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:visibility="gone"
+            />
+
     </RelativeLayout>
 
     <FrameLayout

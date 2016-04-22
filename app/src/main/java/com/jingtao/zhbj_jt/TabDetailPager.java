@@ -2,6 +2,8 @@ package com.jingtao.zhbj_jt;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -30,7 +32,8 @@ import java.util.ArrayList;
 /**
  * Created by jingtao on 16/4/19.
  */
-public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnPageChangeListener{
+public class TabDetailPager extends BaseMenuDetailPager implements ViewPager
+        .OnPageChangeListener {
     private TextView tv_title;//头条标题
 
     private ArrayList<TabData.TopNewsData> mTopNewsList;//头条新闻集合
@@ -55,22 +58,24 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
 
     private NewsAdapter mNewsAdapter;
 
+    private Handler mHandler;
+
     public TabDetailPager(Activity mActivity, NewsData.NewsTabData newsTabData) {
         super(mActivity);
-        mNewsTabData=newsTabData;
+        mNewsTabData = newsTabData;
         //获取url
-        mUrl= GlobalContext.SERVER_URL+mNewsTabData.url;
+        mUrl = GlobalContext.SERVER_URL + mNewsTabData.url;
     }
 
 
-    public void getDataFromServer(){
+    public void getDataFromServer() {
         HttpUtils utils = new HttpUtils();
-        utils.send(HttpRequest.HttpMethod.GET,mUrl, new
+        utils.send(HttpRequest.HttpMethod.GET, mUrl, new
                 RequestCallBack<String>() {
 
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
-                     parseData(responseInfo.result);
+                        parseData(responseInfo.result);
                     }
 
                     @Override
@@ -83,15 +88,15 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
     }
 
     private void parseData(String result) {
-        Gson gson=new Gson();
-        mTabDetailData= gson.fromJson(result, TabData.class);
+        Gson gson = new Gson();
+        mTabDetailData = gson.fromJson(result, TabData.class);
 //        Log.i("info","页签详情页返回结果:"+mTabDetailData);
 
-          mTopNewsList= mTabDetailData.data.topnews;
+        mTopNewsList = mTabDetailData.data.topnews;
 
-         mNewsList=mTabDetailData.data.news;//新闻数据集合
+        mNewsList = mTabDetailData.data.news;//新闻数据集合
 
-        if (mTopNewsList!=null){
+        if (mTopNewsList != null) {
             mViewPager.setAdapter(new TopNewsAdapter());
 
             mIndicator.setViewPager(mViewPager);
@@ -106,9 +111,32 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
 
 
         //填充新闻列表数据
-        if (mNewsList!=null){
-            mNewsAdapter=new NewsAdapter();
+        if (mNewsList != null) {
+            mNewsAdapter = new NewsAdapter();
             lv_list.setAdapter(mNewsAdapter);
+        }
+
+        //图片轮播逻辑,利用handler机制
+        if (mHandler == null) {
+            mHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    Log.i("info", "handler.......");
+
+                    int currentItem = mViewPager.getCurrentItem();
+
+                    if (currentItem < mTopNewsList.size() - 1) {
+                        currentItem++;
+                    } else {
+                        currentItem = 0;
+                    }
+
+                    mViewPager.setCurrentItem(currentItem);
+                    mHandler.sendEmptyMessageDelayed(0, 3000);
+
+                }
+            };
+            mHandler.sendEmptyMessageDelayed(0, 3000);
         }
     }
 
@@ -120,7 +148,7 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
         //加载头布局
         View headerView = View.inflate(mActivity, R.layout.list_header_topnews, null);
 
-       //将头条新闻以头布局形式加载给listview
+        //将头条新闻以头布局形式加载给listview
         lv_list.addHeaderView(headerView);
 
         tv_title = (TextView) headerView.findViewById(R.id.tv_title);
@@ -130,10 +158,16 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
         mIndicator = (CirclePageIndicator) headerView.findViewById(R.id.indicator);
 
 
+        lv_list.setOnRefreshListener(new RefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getDataFromServer();
+            }
+        });
         return view;
     }
 
-    public void initData(){
+    public void initData() {
 //        textView.setText(mNewsTabData.title);
 
         getDataFromServer();
@@ -145,7 +179,7 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
      * 新闻列表适配器
      */
 
-    class NewsAdapter extends BaseAdapter{
+    class NewsAdapter extends BaseAdapter {
 
         private BitmapUtils util;
 
@@ -171,29 +205,28 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder  viewHolder;
-            if (convertView==null){
-                convertView=View.inflate(mActivity,R.layout.list_news_item,null);
-                viewHolder=new ViewHolder();
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                convertView = View.inflate(mActivity, R.layout.list_news_item, null);
+                viewHolder = new ViewHolder();
                 viewHolder.ivPic = (ImageView) convertView.findViewById(R.id.iv_pic);
                 viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_title);
                 viewHolder.tvDate = (TextView) convertView.findViewById(R.id.tv_date);
                 convertView.setTag(viewHolder);
-            }
-            else {
-                viewHolder= (ViewHolder) convertView.getTag();
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            TabData.TabNewsData item= (TabData.TabNewsData) getItem(position);
+            TabData.TabNewsData item = (TabData.TabNewsData) getItem(position);
 
             viewHolder.tvTitle.setText(item.title);
             viewHolder.tvDate.setText(item.pubdate);
-            util.display(viewHolder.ivPic,item.listimage);
+            util.display(viewHolder.ivPic, item.listimage);
             return convertView;
         }
     }
 
-    static class ViewHolder{
+    static class ViewHolder {
         public TextView tvTitle;
         public TextView tvDate;
         public ImageView ivPic;
@@ -214,38 +247,38 @@ public class TabDetailPager extends BaseMenuDetailPager implements ViewPager.OnP
 
     }
 
-    class TopNewsAdapter extends PagerAdapter{
+    class TopNewsAdapter extends PagerAdapter {
 
-          public TopNewsAdapter() {
-              bitmapUtils = new BitmapUtils(mActivity);
-              bitmapUtils.configDefaultLoadingImage(R.drawable.topnews_item_default);
-          }
+        public TopNewsAdapter() {
+            bitmapUtils = new BitmapUtils(mActivity);
+            bitmapUtils.configDefaultLoadingImage(R.drawable.topnews_item_default);
+        }
 
-          @Override
-          public int getCount() {
-              return mTabDetailData.data.topnews.size();
-          }
+        @Override
+        public int getCount() {
+            return mTabDetailData.data.topnews.size();
+        }
 
-          @Override
-          public boolean isViewFromObject(View view, Object object) {
-              return view==object;
-          }
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
 
-          @Override
-          public Object instantiateItem(ViewGroup container, int position) {
-              ImageView imageView = new ImageView(mActivity);
-              imageView.setImageResource(R.drawable.topnews_item_default);
-              imageView.setScaleType(ImageView.ScaleType.FIT_XY);//基于控件大小填充图片
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            ImageView imageView = new ImageView(mActivity);
+            imageView.setImageResource(R.drawable.topnews_item_default);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);//基于控件大小填充图片
 
-             TabData.TopNewsData topNewsData= mTopNewsList.get(position);
-              bitmapUtils.display(imageView,topNewsData.topimage);//传递imageView图片
-              container.addView(imageView);
-              return imageView;
-          }
+            TabData.TopNewsData topNewsData = mTopNewsList.get(position);
+            bitmapUtils.display(imageView, topNewsData.topimage);//传递imageView图片
+            container.addView(imageView);
+            return imageView;
+        }
 
-          @Override
-          public void destroyItem(ViewGroup container, int position, Object object) {
-             container.removeView((View) object);
-          }
-      }
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+    }
 }

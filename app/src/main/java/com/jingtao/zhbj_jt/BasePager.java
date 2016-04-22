@@ -25,6 +25,7 @@ public class BasePager {
 
     //顶部的小菜单选项
     public ImageButton imageButton;
+    public ImageButton ib_photo;
 
     public BasePager(Activity mActivity) {
         this.mActivity = mActivity;
@@ -39,6 +40,7 @@ public class BasePager {
         tv_title = (TextView) mRootView.findViewById(R.id.tv_title);
         fl_context = (FrameLayout) mRootView.findViewById(R.id.fl_context);
         imageButton = (ImageButton) mRootView.findViewById(R.id.ib_menu);
+        ib_photo=(ImageButton) mRootView.findViewById(R.id.ib_photo);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override

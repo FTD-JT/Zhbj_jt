@@ -2,8 +2,10 @@ package com.jingtao.zhbj_jt.basePagerImpl;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -16,6 +18,7 @@ import com.jingtao.zhbj_jt.BaseMenuDetailPager;
 import com.jingtao.zhbj_jt.BasePager;
 import com.jingtao.zhbj_jt.MainActivity;
 import com.jingtao.zhbj_jt.bean.NewsData;
+import com.jingtao.zhbj_jt.common.CacheUtils;
 import com.jingtao.zhbj_jt.fragment.LeftMenuFragment;
 import com.jingtao.zhbj_jt.global.GlobalContext;
 import com.jingtao.zhbj_jt.menudetails.InteractMenuDetailPager;
@@ -59,8 +62,13 @@ public class NewsCenter extends BasePager {
 //        //将textview放到FrameLayout中
 //        fl_context.addView(textView);
 
-        getDataFromServer();
+        String cache = CacheUtils.getCache(GlobalContext.CATEGORIES_URL, mActivity);
 
+        if (!TextUtils.isEmpty(cache)){//如果缓存存在,直接解析数据,无需访问网络
+            parseData(cache);
+        }else {
+            getDataFromServer();
+        }
     }
 
     //向服务器请求数据
@@ -100,7 +108,7 @@ public class NewsCenter extends BasePager {
         mPagers=new ArrayList<BaseMenuDetailPager>();
         mPagers.add(new NewsMenuDetailPager(mActivity,mNewsData.data.get(0).children));
         mPagers.add(new TopicMenuDetailPager(mActivity));
-        mPagers.add(new PhotoMenuDetailPager(mActivity));
+        mPagers.add(new PhotoMenuDetailPager(mActivity,ib_photo));
         mPagers.add(new InteractMenuDetailPager(mActivity));
 
         setCurrentMenuDetailPager(0);//设置一开始侧边栏显示的是新闻第一个菜单详情页
@@ -119,6 +127,13 @@ public class NewsCenter extends BasePager {
          tv_title.setText(newsMenuData.title);
 
          pager.initData();
+
+         //只有在组图页面,切换按钮才会显示出来
+         if (pager instanceof PhotoMenuDetailPager){
+             ib_photo.setVisibility(View.VISIBLE);
+         }else{
+             ib_photo.setVisibility(View.GONE);
+         }
      }
 
 }

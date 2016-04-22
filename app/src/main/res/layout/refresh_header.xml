@@ -47,8 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/darker_gray"
-            android:textSize="16sp"
-            android:text="2016-04-20 15:34:10"
+            android:textSize="14sp"
+            android:text="最后刷新时间2016-04-20 15:34:10"
             android:layout_marginTop="3dp"/>
     </LinearLayout>
 
